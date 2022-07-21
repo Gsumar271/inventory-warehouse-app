@@ -15,9 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skillstorm.warehouse.daos.InventoryDAO;
-import com.skillstorm.warehouse.daos.MySQLProductDAOImpl;
 import com.skillstorm.warehouse.daos.MySQLSupplierDAOImp;
-import com.skillstorm.warehouse.daos.ProductDAO;
 import com.skillstorm.warehouse.models.Product;
 import com.skillstorm.warehouse.models.Supplier;
 import com.skillstorm.warehouse.services.URLParserService;

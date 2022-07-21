@@ -130,7 +130,7 @@ public class MySQLProductDAOImp implements InventoryDAO<Product> {
 				if (keys.next()) {
 					int key = keys.getInt(1); // Give me the auto generated key
 					product.setId(key);
-					return product;
+					
 				}
 				conn.commit(); // Executes ALL queries in a given transaction. Green button
 				return product;
@@ -195,6 +195,7 @@ public class MySQLProductDAOImp implements InventoryDAO<Product> {
 			// Java is going to check our statement ahead of time to make sure it's okay
 			ps.setInt(1, id); // This auto escapes any malicious characters
 			int row = ps.executeUpdate();
+		//	conn.commit(); // Executes ALL queries in a given transaction. Green button
 
 		} catch (SQLException e) {
 			e.printStackTrace();

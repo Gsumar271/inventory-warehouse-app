@@ -121,7 +121,7 @@ public class MySQLCustomerDAOImp implements InventoryDAO<Customer> {
 				if (keys.next()) {
 					int key = keys.getInt(1); // Give me the auto generated key
 					customer.setId(key);
-					return customer;
+					
 				}
 				conn.commit(); // Executes ALL queries in a given transaction. Green button
 				return customer;

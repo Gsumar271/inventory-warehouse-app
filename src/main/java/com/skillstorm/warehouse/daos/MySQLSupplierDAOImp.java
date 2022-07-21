@@ -120,7 +120,7 @@ public class MySQLSupplierDAOImp implements InventoryDAO<Supplier> {
 				if (keys.next()) {
 					int key = keys.getInt(1); // Give me the auto generated key
 					supplier.setId(key);
-					return supplier;
+					
 				}
 				conn.commit(); // Executes ALL queries in a given transaction. Green button
 				return supplier;

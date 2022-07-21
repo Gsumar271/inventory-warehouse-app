@@ -131,7 +131,7 @@ public class MySQLOrderDAOImp implements InventoryDAO<Order> {
 				if (keys.next()) {
 					int key = keys.getInt(1); // Give me the auto generated key
 					order.setId(key);
-					return order;
+				
 				}
 				conn.commit(); // Executes ALL queries in a given transaction. Green button
 				return order;
