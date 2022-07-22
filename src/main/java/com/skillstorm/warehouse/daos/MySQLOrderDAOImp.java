@@ -25,7 +25,7 @@ public class MySQLOrderDAOImp implements InventoryDAO<Order> {
 
 	@Override
 	public List<Order> findAll() {
-		String sql = "SELECT Order_id, Order_type, Product_id, Order_quantity, Order_note, Order_date FROM Orders";
+		String sql = "SELECT Order_id, Order_type, Product_name, Supplier_Customer, Order_quantity, Order_itemPrice, Order_note FROM Order_table";
 
 		// Connection will auto close in the event of a failure. Due to Autocloseable
 		try (Connection conn = WarehouseDbCreds.getInstance().getConnection()) {
@@ -43,8 +43,9 @@ public class MySQLOrderDAOImp implements InventoryDAO<Order> {
 			while (rs.next()) {
 				// Looping over individual rows of the result set
 				Order order = new Order(rs.getInt("Order_id"), rs.getString("Order_type"),
-						rs.getInt("Product_id"), rs.getInt("Order_quantity"),
-						rs.getString("Order_note"), rs.getDate("Order_date"));
+						rs.getString("Product_name"), rs.getString("Supplier_Customer"),
+						rs.getInt("Order_quantity"), rs.getDouble("Order_itemPrice"),
+						rs.getString("Order_note"));
 
 				orders.add(order);
 			}
@@ -59,15 +60,16 @@ public class MySQLOrderDAOImp implements InventoryDAO<Order> {
 	@Override
 	public Order findById(int id) {
 		// find supplier by Id
-		String sql = "SELECT Order_id, Order_type, Product_id, Order_quantity, Order_note, Order_date FROM Orders WHERE Order_id = "
+		String sql = "SELECT Order_id, Order_type, Product_name, Supplier_Customer, Order_quantity, Order_itemPrice, Order_note FROM Order_table WHERE Order_id = "
 				+ id;
 		try (Connection conn = WarehouseDbCreds.getInstance().getConnection()) {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			if (rs.next()) {
 				return new Order(rs.getInt("Order_id"), rs.getString("Order_type"),
-						rs.getInt("Product_id"), rs.getInt("Order_quantity"),
-						rs.getString("Order_note"), rs.getDate("Order_date"));
+						rs.getString("Product_name"), rs.getString("Supplier_Customer"),
+						rs.getInt("Order_quantity"), rs.getDouble("Order_itemPrice"),
+						rs.getString("Order_note"));
 				
 			}
 		} catch (SQLException e) {
@@ -80,7 +82,7 @@ public class MySQLOrderDAOImp implements InventoryDAO<Order> {
 	public Order findByName(String name) {
 		// Use parameterized queries
 		//returns the type of order (purchase order or sales order)
-		String sql = "SELECT Order_id, Order_type, Product_id, Order_quantity, Order_note, Order_date FROM Orders WHERE Order_type = ?";
+		String sql = "SELECT Order_id, Order_type, Product_name, Supplier_Customer, Order_quantity, Order_itemPrice, Order_note FROM Order_table WHERE Order_type = ?";
 		try (Connection conn = WarehouseDbCreds.getInstance().getConnection()) {
 
 			// Instead of using Statement, we will use PreparedStatement
@@ -90,8 +92,9 @@ public class MySQLOrderDAOImp implements InventoryDAO<Order> {
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) { // Make sure there was at least one item there
 				return new Order(rs.getInt("Order_id"), rs.getString("Order_type"),
-						rs.getInt("Product_id"), rs.getInt("Order_quantity"),
-						rs.getString("Order_note"), rs.getDate("Order_date"));
+						rs.getString("Product_name"), rs.getString("Supplier_Customer"),
+						rs.getInt("Order_quantity"), rs.getDouble("Order_itemPrice"),
+						rs.getString("Order_note"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -104,7 +107,7 @@ public class MySQLOrderDAOImp implements InventoryDAO<Order> {
 		
 		Date date;
 		// 
-		String sql = "INSERT INTO Orders (Order_type, Product_id, Order_quantity, Order_note, Order_date) VALUES (?,?,?,?,?)";
+		String sql = "INSERT INTO Order_table (Order_type, Product_name, Supplier_Customer, Order_quantity, Order_itemPrice, Order_note) VALUES (?,?,?,?,?,?)";
 		try (Connection conn = WarehouseDbCreds.getInstance().getConnection()) {
 
 			// Start a transaction
@@ -114,14 +117,17 @@ public class MySQLOrderDAOImp implements InventoryDAO<Order> {
 			PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
 			ps.setString(1, order.getType());
-			ps.setInt(2, order.getProductId());
-			ps.setInt(3, order.getOrderQuantity());
-			ps.setString(4, order.getNote());
+			ps.setString(2, order.getProductName());
+			ps.setString(3, order.getSupplierOrCustomer());
+			ps.setInt(4, order.getOrderQuantity());
+		//	ps.setDate(5, order.getDate());
+			ps.setDouble(5, order.getItemPrice());
+			ps.setString(6, order.getNote());
 			//convert date to sql date 
 			//date = Date.valueOf(order.getDate());
 			//ps.setDate(5, date);
 			//ps.setDate(5, new java.sql.Date(order.getDate().getDate()));
-			ps.setDate(5, order.getDate());
+			
 
 			int rowsAffected = ps.executeUpdate(); // If 0 is returned, my data didn't save
 			if (rowsAffected != 0) {
@@ -143,11 +149,11 @@ public class MySQLOrderDAOImp implements InventoryDAO<Order> {
 			e.printStackTrace();
 		}
 		return null;
-	}
+	} //Order_type, Product_name, Supplier_Customer, Order_quantity, Order_date, Order_itemPrice, Order_note
 
 	@Override
 	public void update(Order order) {
-		String sql = "UPDATE Orders SET Order_type = ?, Product_id = ?, Order_quantity = ?, Order_note = ?, Order_date = ? WHERE Order_id = ?";
+		String sql = "UPDATE Order_table SET Order_type = ?, Product_name = ?, Supplier_Customer = ?, Order_quantity = ?, Order_itemPrice = ?, Order_note = ? WHERE Order_id = ?";
 		try (Connection conn = WarehouseDbCreds.getInstance().getConnection()) {
 			Date date;
 
@@ -155,14 +161,16 @@ public class MySQLOrderDAOImp implements InventoryDAO<Order> {
 			PreparedStatement ps = conn.prepareStatement(sql);
 			// Java is going to check our statement ahead of time to make sure it's okay
 			ps.setString(1, order.getType());
-			ps.setInt(2, order.getProductId());
-			ps.setInt(3, order.getOrderQuantity());
-			ps.setString(4, order.getNote());
+			ps.setString(2, order.getProductName());
+			ps.setString(3, order.getSupplierOrCustomer());
+			ps.setInt(4, order.getOrderQuantity());
+		//	ps.setDate(5, order.getDate());
+			ps.setDouble(5, order.getItemPrice());
+			ps.setString(6, order.getNote());
+			ps.setInt(7, order.getId());
 			//convert date to sql date 
 			//date = Date.valueOf(order.getDate());
-			ps.setDate(5, order.getDate());
 			
-			ps.setInt(6, order.getId());
 			int row = ps.executeUpdate();
 
 		} catch (SQLException e) {
@@ -173,7 +181,7 @@ public class MySQLOrderDAOImp implements InventoryDAO<Order> {
 
 	@Override
 	public void delete(Order order) {
-		String sql = "DELETE FROM Orders WHERE Order_type = ?";
+		String sql = "DELETE FROM Order_table WHERE Order_type = ?";
 		try (Connection conn = WarehouseDbCreds.getInstance().getConnection()) {
 
 			// Instead of using Statement, we will use PreparedStatement
@@ -190,7 +198,7 @@ public class MySQLOrderDAOImp implements InventoryDAO<Order> {
 
 	@Override
 	public void delete(int id) {
-		String sql = "DELETE FROM Orders WHERE Order_id = ?";
+		String sql = "DELETE FROM Order_table WHERE Order_id = ?";
 		try (Connection conn = WarehouseDbCreds.getInstance().getConnection()) {
 
 			// Instead of using Statement, we will use PreparedStatement
@@ -207,7 +215,7 @@ public class MySQLOrderDAOImp implements InventoryDAO<Order> {
 
 	@Override
 	public void deleteMany(int[] ids) {
-		String sql = "DELETE FROM Orders WHERE Order_id = ?";
+		String sql = "DELETE FROM Order WHERE Order_id = ?";
 		try (Connection conn = WarehouseDbCreds.getInstance().getConnection()) {
 			
 			PreparedStatement ps;

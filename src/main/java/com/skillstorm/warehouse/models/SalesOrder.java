@@ -1,5 +1,6 @@
 package com.skillstorm.warehouse.models;
 
+import java.sql.Date;
 import java.time.LocalDate;
 /**
  * @author yevgsumaryev
@@ -58,7 +59,6 @@ public class SalesOrder {
 	public void setCustomerId(int customerId) {
 		this.customerId = customerId;
 	}
-	
 	
 
 }

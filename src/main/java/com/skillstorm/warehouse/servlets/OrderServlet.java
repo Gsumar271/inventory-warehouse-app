@@ -76,7 +76,7 @@ public class OrderServlet extends HttpServlet {
 			int id = urlService.extractIdFromURL(req.getPathInfo());
 			// This means they want a specific artist. Find that artist
 			Order order = dao.findById(id);
-			System.out.println(order.getDate());
+			//System.out.println(order.getDate());
 			if (order != null) {
 				resp.setContentType("application/json");
 				resp.getWriter().print(mapper.writeValueAsString(order));

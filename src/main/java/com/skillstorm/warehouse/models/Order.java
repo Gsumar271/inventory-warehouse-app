@@ -15,28 +15,54 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class Order {
 	
 	private int id;
-	private String type;
-	private int productId; //reference to a purchased product
+	private String type; //Purchase or Sales 
+	private String productName; //reference to a purchased product
+	private String supplierOrCustomer; //Supplier or Customer name 
 	private int orderQuantity; //size of the order 
+//	private Date date;
+	private double itemPrice; // price oer Item
 	private String note;
-	//private @JsonFormat(pattern = "MM/dd/yyyy")LocalDate date; //transaction date
-	private Date date;
 	
-	public Order() {
+public Order() {
 		
 	}
 	
+	public String getProductName() {
+	return productName;
+}
 
-	public Order(int id, String type, int productId, int orderQuantity, String note, Date date) {
+public void setProductName(String productName) {
+	this.productName = productName;
+}
+
+public String getSupplierOrCustomer() {
+	return supplierOrCustomer;
+}
+
+public void setSupplierOrCustomer(String supplierOrCustomer) {
+	this.supplierOrCustomer = supplierOrCustomer;
+}
+
+public double getItemPrice() {
+	return itemPrice;
+}
+
+public void setItemPrice(double itemPrice) {
+	this.itemPrice = itemPrice;
+}
+
+	public Order(int id, String type, String productName, String supplierOrCustomer, int orderQuantity,
+			double itemPrice, String note) {
 		super();
 		this.id = id;
 		this.type = type;
-		this.productId = productId;
+		this.productName = productName;
+		this.supplierOrCustomer = supplierOrCustomer;
 		this.orderQuantity = orderQuantity;
+	//	this.date = date;
+		this.itemPrice = itemPrice;
 		this.note = note;
-		this.date = date;
 	}
-
 
 
 	public int getId() {
@@ -55,14 +81,6 @@ public class Order {
 		this.type = type;
 	}
 
-	public int getProductId() {
-		return productId;
-	}
-
-	public void setProductId(int productId) {
-		this.productId = productId;
-	}
-
 	public int getOrderQuantity() {
 		return orderQuantity;
 	}
@@ -78,7 +96,7 @@ public class Order {
 	public void setNote(String note) {
 		this.note = note;
 	}
-
+/*
 	public Date getDate() {
 		return date;
 	}
@@ -86,6 +104,7 @@ public class Order {
 	public void setDate(Date date) {
 		this.date = date;
 	}
+	*/
 
 
 }
